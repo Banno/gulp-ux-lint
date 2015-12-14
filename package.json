@@ -1,0 +1,35 @@
+{
+  "name": "gulp-ux-lint",
+  "version": "1.0.0",
+  "description": "Gulp plugin for banno/ux-lint",
+  "private": true,
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Banno/gulp-ux-lint.git"
+  },
+  "keywords": [
+    "banno",
+    "gulpplugin",
+    "lint",
+    "linter"
+  ],
+  "author": "Eric Heikes <eric.heikes@banno.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Banno/gulp-ux-lint/issues"
+  },
+  "homepage": "https://github.com/Banno/gulp-ux-lint",
+  "scripts": {
+    "lint": "ux-lint *.js test/*.js",
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "mocha": "^2.3.4",
+    "should": "^8.0.1",
+    "stream-assert": "^2.0.3"
+  },
+  "dependencies": {
+    "ux-lint": "github:banno/ux-lint"
+  }
+}
