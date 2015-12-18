@@ -21,15 +21,19 @@
   },
   "homepage": "https://github.com/Banno/gulp-ux-lint",
   "scripts": {
-    "lint": "ux-lint *.js test/*.js",
+    "lint": "ux-lint *.js test/*.js --extend .lintrc",
     "test": "mocha"
   },
   "devDependencies": {
     "mocha": "^2.3.4",
+    "proxyquire": "^1.7.3",
     "should": "^8.0.1",
+    "sinon": "^1.17.2",
     "stream-assert": "^2.0.3"
   },
   "dependencies": {
+    "gulp-util": "^3.0.7",
+    "through2": "^2.0.0",
     "ux-lint": "github:banno/ux-lint"
   }
 }
