@@ -57,6 +57,17 @@ describe('gulp-ux-lint', function() {
 		stream.end();
 	});
 
+	it('should add a "lint" object to the file object', function(done) {
+		stream
+			.pipe(assert.length(1))
+			.pipe(assert.first(function(file) {
+				file.lint.should.be.instanceOf(Array);
+			}))
+			.pipe(assert.end(done));
+		stream.write(testBuffer);
+		stream.end();
+	});
+
 	it('should call the check() method', function(done) {
 		stream
 			.pipe(assert.length(1))

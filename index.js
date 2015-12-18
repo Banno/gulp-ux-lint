@@ -28,6 +28,7 @@ module.exports = function(opts) {
 					cb(new gutil.PluginError(PLUGIN_NAME, err));
 					return;
 				}
+				file.lint = lintErrors;
 				allLintErrors = allLintErrors.concat(lintErrors);
 				cb(null, file);
 			});
