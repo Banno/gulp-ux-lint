@@ -25,6 +25,7 @@
     "test": "mocha"
   },
   "devDependencies": {
+    "fs-extra": "^0.26.3",
     "mocha": "^2.3.4",
     "proxyquire": "^1.7.3",
     "should": "^8.0.1",
@@ -32,6 +33,7 @@
     "stream-assert": "^2.0.3"
   },
   "dependencies": {
+    "extend": "^3.0.0",
     "gulp-util": "^3.0.7",
     "through2": "^2.0.0",
     "ux-lint": "github:banno/ux-lint"

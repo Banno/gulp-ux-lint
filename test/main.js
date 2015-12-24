@@ -2,7 +2,7 @@
 
 var assert     = require('stream-assert');
 var File       = require('gulp-util').File;
-var fs         = require('fs');
+var fs         = require('fs-extra');
 var path       = require('path');
 var proxyquire = require('proxyquire');
 var should     = require('should');
@@ -31,7 +31,7 @@ describe('gulp-ux-lint', function() {
 		reporterSpy.reset();
 		uxLint.check.reset();
 		uxLint.fix.reset();
-		stream = linter();
+		stream = linter({ extend: false });
 		testBuffer = new File({
 			base: __dirname,
 			path: path.join(__dirname, testFile),
@@ -80,7 +80,7 @@ describe('gulp-ux-lint', function() {
 	});
 
 	it('should call the fix() method when { fix: true } is passed', function(done) {
-		stream = linter({ fix: true });
+		stream = linter({ extend: false, fix: true });
 		stream
 			.pipe(assert.length(1))
 			.pipe(assert.end(function() {
@@ -89,6 +89,53 @@ describe('gulp-ux-lint', function() {
 			}));
 		stream.write(testBuffer);
 		stream.end();
+	});
+
+	describe('"extend" option', function() {
+
+		var tmpPath = 'test/.tmp';
+		var tmpFile = tmpPath + '/' + path.basename(testFile);
+
+		beforeEach(function() {
+			fs.mkdirsSync(tmpPath);
+			fs.copySync('test/fixtures/lintrc', tmpPath + '/.lintrc');
+			fs.copySync('test/' + testFile, tmpFile);
+			testBuffer = new File({
+				base: path.resolve(tmpPath),
+				path: path.resolve(tmpFile),
+				contents: new Buffer(fs.readFileSync(
+					path.resolve(tmpFile),
+					{ encoding: 'utf8' }
+				).trim())
+			});
+		});
+
+		afterEach(function() {
+			fs.removeSync(tmpPath);
+		});
+
+		it('should take the .lintrc config into consideration', function(done) {
+			stream = linter({ cwd: tmpPath });
+			stream
+				.pipe(assert.first(function(file) {
+					file.lint.should.have.lengthOf(0);
+				}))
+				.pipe(assert.end(done));
+			stream.write(testBuffer);
+			stream.end();
+		});
+
+		it('should *not* include the .lintrc config if { extend: false } is passed', function(done) {
+			stream = linter({ cwd: tmpPath, extend: false });
+			stream
+				.pipe(assert.first(function(file) {
+					file.lint.should.not.have.lengthOf(0);
+				}))
+				.pipe(assert.end(done));
+			stream.write(testBuffer);
+			stream.end();
+		});
+
 	});
 
 	it('should work with no files', function(done) {
