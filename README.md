@@ -30,8 +30,7 @@ var lint = require('gulp-ux-lint');
 
 gulp.task('fix-files', function() {
   return gulp.src('src/*.js')
-    .pipe(lint({ fix: true }))
-    .pipe(gulp.dest('src'));
+    .pipe(lint({ fix: true }));
 });
 ```
 
@@ -51,7 +50,7 @@ Looks for a `.lintrc` file in the current directory for configuration overrides.
 Type: `boolean`
 Default: `false`
 
-Attempt to automatically fix the errors. Be sure to pipe to `gulp.dest()` if you use this option.
+Attempt to automatically fix the errors. Files are changed "inline", so there is no need to pipe to `gulp.dest()` if you use this option.
 
 ## Results
 
