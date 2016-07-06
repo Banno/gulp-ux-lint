@@ -5,7 +5,7 @@ This is a [gulp](http://gulpjs.com/) plugin for [ux-lint](https://github.com/Ban
 ## Installation
 
 ```shell
-$ npm install --save-dev banno/gulp-ux-lint
+$ npm install --save-dev gulp-ux-lint
 ```
 
 ## Usage
