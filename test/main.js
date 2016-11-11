@@ -5,12 +5,12 @@ var File       = require('gulp-util').File;
 var fs         = require('fs-extra');
 var path       = require('path');
 var proxyquire = require('proxyquire');
-var should     = require('should');
 var sinon      = require('sinon');
 var Stream     = require('stream');
 var uxLint     = require('ux-lint');
 
 require('mocha');
+require('should');
 
 var testFile = 'fixtures/bad-javascript.js';
 

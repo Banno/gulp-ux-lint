@@ -28,28 +28,28 @@ module.exports = function(opts) {
 	}
 
 	return through.obj(function(file, enc, cb) {
-			if (file.isNull()) {
-				cb(null, file);
+		if (file.isNull()) {
+			cb(null, file);
+			return;
+		}
+
+		if (file.isStream()) {
+			cb(new gutil.PluginError(PLUGIN_NAME, 'Streaming not supported'));
+			return;
+		}
+
+		var func = opts.fix ? 'fix' : 'check';
+		linter[func](file.path, opts, function(err, lintErrors) {
+			if (err) {
+				cb(new gutil.PluginError(PLUGIN_NAME, err));
 				return;
 			}
-
-			if (file.isStream()) {
-				cb(new gutil.PluginError(PLUGIN_NAME, 'Streaming not supported'));
-				return;
-			}
-
-			var func = opts.fix ? 'fix' : 'check';
-			linter[func](file.path, opts, function(err, lintErrors) {
-				if (err) {
-					cb(new gutil.PluginError(PLUGIN_NAME, err));
-					return;
-				}
-				file.lint = lintErrors;
-				allLintErrors = allLintErrors.concat(lintErrors);
-				cb(null, file);
-			});
-		}, function(cb) {
-			reporter(allLintErrors);
-			cb();
+			file.lint = lintErrors;
+			allLintErrors = allLintErrors.concat(lintErrors);
+			cb(null, file);
 		});
+	}, function(cb) {
+		reporter(allLintErrors);
+		cb();
+	});
 };
