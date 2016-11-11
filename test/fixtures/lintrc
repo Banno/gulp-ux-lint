@@ -1,8 +1,13 @@
 {
-	"jshint": {
-		"node": true,
+	"eslint": {
+		"env": {
+			"node": true
+		},
 		"globals": {
 			"onboarding": false
+		},
+		"rules": {
+			"no-console": "off"
 		}
 	}
 }
