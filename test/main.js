@@ -1,33 +1,33 @@
 'use strict';
 
-var assert     = require('stream-assert');
-var File       = require('gulp-util').File;
-var fs         = require('fs-extra');
-var path       = require('path');
-var proxyquire = require('proxyquire');
-var sinon      = require('sinon');
-var Stream     = require('stream');
-var uxLint     = require('ux-lint');
+const assert     = require('stream-assert');
+const File       = require('gulp-util').File;
+const fs         = require('fs-extra');
+const path       = require('path');
+const proxyquire = require('proxyquire');
+const sinon      = require('sinon');
+const Stream     = require('stream');
+const uxLint     = require('ux-lint');
 
 require('mocha');
 require('should');
 
-var testFile = 'fixtures/bad-javascript.js';
+const testFile = 'fixtures/bad-javascript.js';
 
-describe('gulp-ux-lint', function() {
+describe('gulp-ux-lint', () => {
 
-	var stream, testBuffer;
+	let stream, testBuffer;
 
-	var reporterSpy = sinon.spy();
+	let reporterSpy = sinon.spy();
 	sinon.spy(uxLint, 'check');
 	sinon.spy(uxLint, 'fix');
 
-	var linter = proxyquire('../', {
+	let linter = proxyquire('../', {
 		'ux-lint': uxLint,
 		'ux-lint/reporters/stylish': reporterSpy
 	});
 
-	beforeEach(function() {
+	beforeEach(() => {
 		reporterSpy.reset();
 		uxLint.check.reset();
 		uxLint.fix.reset();
@@ -42,13 +42,13 @@ describe('gulp-ux-lint', function() {
 		});
 	});
 
-	it('should call the reporter', function(done) {
+	it('should call the reporter', done => {
 		stream
 			.pipe(assert.length(1))
-			.pipe(assert.first(function(file) {
+			.pipe(assert.first(file => {
 				file.should.eql(testBuffer);
 			}))
-			.pipe(assert.end(function() {
+			.pipe(assert.end(() => {
 				sinon.assert.calledOnce(reporterSpy);
 				(reporterSpy.firstCall.args[0].length).should.be.greaterThan(0);
 				done();
@@ -57,10 +57,10 @@ describe('gulp-ux-lint', function() {
 		stream.end();
 	});
 
-	it('should add a "lint" object to the file object', function(done) {
+	it('should add a "lint" object to the file object', done => {
 		stream
 			.pipe(assert.length(1))
-			.pipe(assert.first(function(file) {
+			.pipe(assert.first(file => {
 				file.lint.should.be.instanceOf(Array);
 			}))
 			.pipe(assert.end(done));
@@ -68,10 +68,10 @@ describe('gulp-ux-lint', function() {
 		stream.end();
 	});
 
-	it('should call the check() method', function(done) {
+	it('should call the check() method', done => {
 		stream
 			.pipe(assert.length(1))
-			.pipe(assert.end(function() {
+			.pipe(assert.end(() => {
 				sinon.assert.calledOnce(uxLint.check);
 				done();
 			}));
@@ -79,11 +79,11 @@ describe('gulp-ux-lint', function() {
 		stream.end();
 	});
 
-	it('should call the fix() method when { fix: true } is passed', function(done) {
+	it('should call the fix() method when { fix: true } is passed', done => {
 		stream = linter({ extend: false, fix: true });
 		stream
 			.pipe(assert.length(1))
-			.pipe(assert.end(function() {
+			.pipe(assert.end(() => {
 				sinon.assert.calledOnce(uxLint.fix);
 				done();
 			}));
@@ -91,12 +91,12 @@ describe('gulp-ux-lint', function() {
 		stream.end();
 	});
 
-	describe('"extend" option', function() {
+	describe('"extend" option', () => {
 
-		var tmpPath = 'test/.tmp';
-		var tmpFile = tmpPath + '/' + path.basename(testFile);
+		let tmpPath = 'test/.tmp';
+		let tmpFile = tmpPath + '/' + path.basename(testFile);
 
-		beforeEach(function() {
+		beforeEach(() => {
 			fs.mkdirsSync(tmpPath);
 			fs.copySync('test/fixtures/lintrc', tmpPath + '/.lintrc');
 			fs.copySync('test/' + testFile, tmpFile);
@@ -110,14 +110,14 @@ describe('gulp-ux-lint', function() {
 			});
 		});
 
-		afterEach(function() {
+		afterEach(() => {
 			fs.removeSync(tmpPath);
 		});
 
-		it('should take the .lintrc config into consideration', function(done) {
+		it('should take the .lintrc config into consideration', done => {
 			stream = linter({ cwd: tmpPath });
 			stream
-				.pipe(assert.first(function(file) {
+				.pipe(assert.first(file => {
 					file.lint.should.have.lengthOf(0);
 				}))
 				.pipe(assert.end(done));
@@ -125,10 +125,10 @@ describe('gulp-ux-lint', function() {
 			stream.end();
 		});
 
-		it('should *not* include the .lintrc config if { extend: false } is passed', function(done) {
+		it('should *not* include the .lintrc config if { extend: false } is passed', done => {
 			stream = linter({ cwd: tmpPath, extend: false });
 			stream
-				.pipe(assert.first(function(file) {
+				.pipe(assert.first(file => {
 					file.lint.should.not.have.lengthOf(0);
 				}))
 				.pipe(assert.end(done));
@@ -138,13 +138,13 @@ describe('gulp-ux-lint', function() {
 
 	});
 
-	it('should work with no files', function(done) {
+	it('should work with no files', done => {
 		stream
 			.pipe(assert.length(1))
-			.pipe(assert.first(function(file) {
+			.pipe(assert.first(file => {
 				file.should.eql(new File());
 			}))
-			.pipe(assert.end(function() {
+			.pipe(assert.end(() => {
 				sinon.assert.calledOnce(reporterSpy);
 				done();
 			}));
@@ -152,9 +152,9 @@ describe('gulp-ux-lint', function() {
 		stream.end();
 	});
 
-	it('should emit an error with a streamed file', function(done) {
+	it('should emit an error with a streamed file', done => {
 		stream
-			.on('error', function(err) {
+			.on('error', err => {
 				err.message.should.eql('Streaming not supported');
 				done();
 			});
