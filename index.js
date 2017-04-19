@@ -1,23 +1,23 @@
 'use strict';
 
-var extend   = require('extend');
-var fs       = require('fs');
-var gutil    = require('gulp-util');
-var linter   = require('ux-lint');
-var path     = require('path');
-var reporter = require('ux-lint/reporters/stylish');
-var through  = require('through2');
+const extend   = require('extend');
+const fs       = require('fs');
+const gutil    = require('gulp-util');
+const linter   = require('ux-lint');
+const path     = require('path');
+const reporter = require('ux-lint/reporters/stylish');
+const through  = require('through2');
 
-var PLUGIN_NAME = 'gulp-ux-lint';
+const PLUGIN_NAME = 'gulp-ux-lint';
 
 module.exports = function(opts) {
-	var allLintErrors = [];
+	let allLintErrors = [];
 	opts = opts || {};
 
 	opts.cwd = opts.cwd || process.cwd();
 
 	if (opts.extend || typeof opts.extend === 'undefined') {
-		var lintrc = {};
+		let lintrc = {};
 		try {
 			lintrc = JSON.parse(fs.readFileSync(path.resolve(opts.cwd, '.lintrc'), 'utf8'));
 		} catch (e) {
@@ -27,7 +27,7 @@ module.exports = function(opts) {
 		extend(opts, lintrc);
 	}
 
-	return through.obj(function(file, enc, cb) {
+	return through.obj((file, enc, cb) => {
 		if (file.isNull()) {
 			cb(null, file);
 			return;
@@ -38,8 +38,8 @@ module.exports = function(opts) {
 			return;
 		}
 
-		var func = opts.fix ? 'fix' : 'check';
-		linter[func](file.path, opts, function(err, lintErrors) {
+		let func = opts.fix ? 'fix' : 'check';
+		linter[func](file.path, opts, (err, lintErrors) => {
 			if (err) {
 				cb(new gutil.PluginError(PLUGIN_NAME, err));
 				return;
@@ -48,7 +48,7 @@ module.exports = function(opts) {
 			allLintErrors = allLintErrors.concat(lintErrors);
 			cb(null, file);
 		});
-	}, function(cb) {
+	}, cb => {
 		reporter(allLintErrors);
 		cb();
 	});
