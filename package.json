@@ -1,6 +1,6 @@
 {
   "name": "gulp-ux-lint",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Gulp plugin for banno/ux-lint",
   "main": "index.js",
   "repository": {
